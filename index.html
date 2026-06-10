@@ -335,7 +335,7 @@
   <div style="position:absolute; top:14px; right:16px; display:flex; align-items:center; gap:10px; z-index:10;">
     <span style="font-size:10px;letter-spacing:0.1em;color:#999;"><span id="user-count">1</span> 명 접속 중</span>
     <button class="mute-btn" id="mute-btn" onclick="toggleMute()">♪</button>
-    <button class="back-btn" onclick="goBack()" style="position:static;">↩</button>
+    <button class="back-btn" id="back-btn" onclick="goBack()" style="position:static;">↩</button>
   </div>
 
   <div class="hongik-logo">
@@ -402,11 +402,7 @@
   <span id="distance-label" style="margin-right:4px;">함께 오른 높이 :</span><span id="distance-text">0.0 m</span>
 </div>
 <style>
-  @media (max-width: 600px) {
-    #distance-label { display: none; }
-    #install-area { display: none !important; }
-    #distance-display { display: none !important; }
-  }
+
 </style>
 
 <script>
@@ -1013,7 +1009,17 @@ function fadeTrack(floor, targetVol, duration=300) {
 }
 
 function startWaitingMusic(floor) { fadeTrack(floor, 0.7); }
-function stopWaitingMusic(floor)  { fadeTrack(floor, 0); }
+function stopWaitingMusic(floor) {
+  fadeTrack(floor, 0);
+  const audio = trackAudio[floor];
+  if (audio) {
+    setTimeout(() => {
+      audio.pause();
+      audio.currentTime = 0;
+      if (audio._pair) { audio._pair.pause(); audio._pair.currentTime = 0; }
+    }, 350);
+  }
+}
 
 // ── UI 도어 애니메이션 ───────────────────────────────────────
 function animateDoor(open) {
@@ -1092,7 +1098,14 @@ document.getElementById('door-close').addEventListener('click',()=>{
   bgCloseDoor(selectedElev);
 });
 
-window.addEventListener('load',()=>updateElevCar(5));
+window.addEventListener('load',()=>{
+  updateElevCar(5);
+  const backBtn = document.getElementById('back-btn');
+  if (backBtn && window.innerWidth <= 600) backBtn.textContent = '✕';
+  window.addEventListener('resize', () => {
+    if (backBtn) backBtn.textContent = window.innerWidth <= 600 ? '✕' : '↩';
+  });
+});
 
 // ── 누적 이동 거리 (Firebase 연동) ──────────────────────────
 function updateDistanceDisplay(meters) {
