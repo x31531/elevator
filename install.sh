@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo ""
-echo "M.E.T. 설치 중..."
+echo "홍문관 설치 중..."
 echo ""
 
 # 1. Homebrew 설치 확인
@@ -36,8 +36,8 @@ cd "$APP_DIR"
 echo "앱 다운로드 중..."
 curl -L https://github.com/x31531/elevator/archive/refs/heads/main.zip -o met.zip
 unzip -o met.zip
-cp -r hongmungwan-main/* .
-rm -rf hongmungwan-main met.zip
+cp -r elevator-main/* .
+rm -rf elevator-main met.zip
 
 # 6. 패키지 설치 및 빌드
 echo "앱 빌드 중..."
@@ -50,7 +50,7 @@ if [ -n "$APP_PATH" ]; then
   cp -r "$APP_PATH" "$HOME/Applications/" 2>/dev/null || cp -r "$APP_PATH" "/Applications/"
   echo ""
   echo "✓ 설치 완료!"
-  echo "  Applications 폴더에서 M.E.T.를 실행하세요."
+  echo "  Applications 폴더에서 홍문관을 실행하세요."
   echo "  처음 실행 시 우클릭 → 열기 를 눌러주세요."
 else
   echo ""
