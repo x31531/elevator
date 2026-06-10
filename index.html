@@ -311,6 +311,21 @@
     </div>
   </div>
   </div><!-- .landing-elevs -->
+
+  <div id="install-area" style="position:absolute;bottom:24px;left:50%;transform:translateX(-50%);text-align:center;">
+    <button onclick="toggleInstall()" style="font-family:'Main',sans-serif;font-size:9px;letter-spacing:0.08em;border:1px solid #ccc;background:transparent;color:#aaa;padding:3px 10px;border-radius:4px;cursor:pointer;">위젯으로 설치</button>
+  </div>
+
+  <!-- 설치 팝업 -->
+  <div id="install-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.2);z-index:2000;align-items:center;justify-content:center;">
+    <div style="background:#f8f8f6;border:1.1px solid #0012DE;border-radius:12px;padding:28px 24px;width:340px;position:relative;text-align:left;">
+      <div style="font-family:'Main',sans-serif;font-size:12px;letter-spacing:0.08em;color:#0012DE;margin-bottom:12px;">맥 위젯으로 설치하기</div>
+      <div style="font-family:'Main',sans-serif;font-size:9px;color:#999;line-height:1.8;margin-bottom:14px;">터미널을 열고 아래 명령어를 붙여넣으세요.</div>
+      <div onclick="copyInstall()" style="cursor:pointer;font-family:monospace;font-size:9px;background:#e8e8e6;color:#0012DE;padding:10px;border-radius:6px;word-break:break-all;line-height:1.6;">curl -fsSL https://raw.githubusercontent.com/x31531/elevator/main/install.sh | bash</div>
+      <div id="install-copy-msg" style="font-family:'Main',sans-serif;font-size:9px;color:#999;margin-top:6px;opacity:0;transition:opacity 0.3s;">복사됨</div>
+      <button onclick="toggleInstall()" style="position:absolute;top:12px;right:14px;font-family:'Main',sans-serif;font-size:12px;border:none;background:none;color:#999;cursor:pointer;">✕</button>
+    </div>
+  </div>
 </div>
 
 <div id="app">
@@ -393,6 +408,24 @@
 </style>
 
 <script>
+// ── 위젯 설치 안내 ───────────────────────────────────────────
+function toggleInstall() {
+  const popup = document.getElementById('install-popup');
+  if (!popup) return;
+  popup.style.display = popup.style.display === 'none' ? 'flex' : 'none';
+}
+function copyInstall() {
+  navigator.clipboard.writeText('curl -fsSL https://raw.githubusercontent.com/x31531/elevator/main/install.sh | bash');
+  const msg = document.getElementById('install-copy-msg');
+  if (msg) { msg.style.opacity = '1'; setTimeout(() => msg.style.opacity = '0', 1500); }
+}
+if (navigator.userAgent.includes('Electron')) {
+  document.addEventListener('DOMContentLoaded', () => {
+    const el = document.getElementById('install-area');
+    if (el) el.style.display = 'none';
+  });
+}
+
 // ── 랜딩 페이지 ──────────────────────────────────────────────
 function initLanding() {
   [0,1,2].forEach(i => {
