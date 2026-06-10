@@ -399,7 +399,7 @@
 </div>
 </div><!-- #app -->
 <div id="distance-display" style="position:fixed;bottom:24px;right:24px;font-family:'Main',sans-serif;font-size:11px;letter-spacing:0.08em;color:#999;text-align:right;pointer-events:none;">
-  <span id="distance-label" style="margin-right:4px;">우리가 함께 오른 높이 :</span><span id="distance-text">0.0 m</span>
+  <span id="distance-label" style="margin-right:4px;">함께 오른 높이 :</span><span id="distance-text">0.0 m</span>
 </div>
 <style>
   @media (max-width: 600px) {
@@ -987,7 +987,7 @@ function initAllTracks() {
       }
     });
     a._pair = b; b._pair = a;
-    a.play().catch(() => {});
+    // 자동 재생 제거 — fadeTrack 호출 시 재생 시작
     trackAudio[fd.floor] = a;
   });
 }
@@ -996,6 +996,10 @@ function fadeTrack(floor, targetVol, duration=300) {
   if (isMuted && targetVol > 0) return;
   const audio = trackAudio[floor];
   if (!audio) return;
+  // 볼륨 올릴 때 재생 시작
+  if (targetVol > 0 && audio.paused) {
+    audio.play().catch(() => {});
+  }
   const steps = 20, interval = duration / steps;
   const startVol = audio.volume, delta = (targetVol - startVol) / steps;
   let step = 0;
