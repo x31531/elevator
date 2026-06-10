@@ -34,7 +34,7 @@ cd "$APP_DIR"
 
 # 5. GitHub에서 소스 다운로드
 echo "앱 다운로드 중..."
-curl -L https://github.com/x31531/hongmungwan/archive/refs/heads/main.zip -o met.zip
+curl -L https://github.com/x31531/elevator/archive/refs/heads/main.zip -o met.zip
 unzip -o met.zip
 cp -r hongmungwan-main/* .
 rm -rf hongmungwan-main met.zip
