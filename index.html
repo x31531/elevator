@@ -254,6 +254,12 @@
   /* 메인 앱 초기엔 숨김 */
   #app { opacity: 0; transition: opacity 0.6s ease 0.3s; }
   #app.visible { opacity: 1; }
+
+  @media (max-width: 600px) {
+    #distance-label { display: none; }
+    #install-area { display: none !important; }
+    #distance-display { display: none !important; }
+  }
 </style>
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
