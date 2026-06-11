@@ -115,6 +115,7 @@
     left: 0; right: 0;
     height: 110px;
     z-index: 2;
+    cursor: pointer;
   }
   .elev-car svg { width: 100%; height: 100%; }
 
@@ -257,6 +258,7 @@
 
   @media (max-width: 600px) {
     #distance-label { display: none; }
+    #my-distance-label { display: none; }
     #install-area { display: none !important; }
     #distance-display { display: none !important; }
   }
@@ -404,8 +406,9 @@
   </div>
 </div>
 </div><!-- #app -->
-<div id="distance-display" style="position:fixed;bottom:24px;right:24px;font-family:'Main',sans-serif;font-size:11px;letter-spacing:0.08em;color:#999;text-align:right;pointer-events:none;">
-  <span id="distance-label" style="margin-right:4px;">함께 오른 높이 :</span><span id="distance-text">0.0 m</span>
+<div id="distance-display" style="position:fixed;bottom:24px;right:24px;font-family:'Main',sans-serif;font-size:11px;letter-spacing:0.08em;color:#999;text-align:right;pointer-events:none;line-height:1.8;">
+  <div><span id="distance-label">함께 오른 높이 : </span><span id="distance-text">0.0 m</span></div>
+  <div><span id="my-distance-label">내가 오른 높이 : </span><span id="my-distance-text">0.0 m</span></div>
 </div>
 <style>
 
@@ -1104,6 +1107,14 @@ document.getElementById('door-close').addEventListener('click',()=>{
   bgCloseDoor(selectedElev);
 });
 
+// 엘베 카 클릭 → 문 열려있을 때 링크 이동
+document.getElementById('elev-car').addEventListener('click', () => {
+  const st = elevStates[selectedElev];
+  if (st && st.doorOpen) {
+    window.open('https://my.hongik.ac.kr/my/login.do?Refer=https://at.hongik.ac.kr/', '_blank');
+  }
+});
+
 window.addEventListener('load',()=>{
   updateElevCar(5);
   const backBtn = document.getElementById('back-btn');
@@ -1114,6 +1125,18 @@ window.addEventListener('load',()=>{
 });
 
 // ── 누적 이동 거리 (Firebase 연동) ──────────────────────────
+let myDistance = 0;
+
+function updateMyDistanceDisplay() {
+  const el = document.getElementById('my-distance-text');
+  if (!el) return;
+  if (myDistance < 1000) {
+    el.textContent = myDistance.toFixed(1) + ' m';
+  } else {
+    el.textContent = (myDistance / 1000).toFixed(2) + ' km';
+  }
+}
+
 function updateDistanceDisplay(meters) {
   const el = document.getElementById('distance-text');
   if (!el) return;
@@ -1126,6 +1149,8 @@ function updateDistanceDisplay(meters) {
 
 function addDistance(floors) {
   const meters = floors * 4;
+  myDistance += meters;
+  updateMyDistanceDisplay();
   if (typeof db === 'undefined') return;
   db.ref('totalDistance').transaction(current => (current || 0) + meters);
 }
