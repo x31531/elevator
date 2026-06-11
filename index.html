@@ -258,7 +258,6 @@
 
   @media (max-width: 600px) {
     #distance-label { display: none; }
-    #my-distance-label { display: none; }
     #install-area { display: none !important; }
     #distance-display { display: none !important; }
   }
@@ -406,9 +405,8 @@
   </div>
 </div>
 </div><!-- #app -->
-<div id="distance-display" style="position:fixed;bottom:24px;right:24px;font-family:'Main',sans-serif;font-size:11px;letter-spacing:0.08em;color:#999;text-align:right;pointer-events:none;line-height:1.8;">
-  <div><span id="distance-label">함께 오른 높이 : </span><span id="distance-text">0.0 m</span></div>
-  <div><span id="my-distance-label">내가 오른 높이 : </span><span id="my-distance-text">0.0 m</span></div>
+<div id="distance-display" onclick="toggleDistanceMode()" style="position:fixed;bottom:24px;right:24px;font-family:'Main',sans-serif;font-size:11px;letter-spacing:0.08em;color:#999;text-align:right;cursor:pointer;">
+  <span id="distance-label">함께 오른 높이 : </span><span id="distance-text">0.0 m</span>
 </div>
 <style>
 
@@ -1126,18 +1124,31 @@ window.addEventListener('load',()=>{
 
 // ── 누적 이동 거리 (Firebase 연동) ──────────────────────────
 let myDistance = 0;
+let distanceMode = 'total'; // 'total' or 'mine'
 
-function updateMyDistanceDisplay() {
-  const el = document.getElementById('my-distance-text');
-  if (!el) return;
-  if (myDistance < 1000) {
-    el.textContent = myDistance.toFixed(1) + ' m';
+function toggleDistanceMode() {
+  distanceMode = distanceMode === 'total' ? 'mine' : 'total';
+  const label = document.getElementById('distance-label');
+  if (distanceMode === 'total') {
+    label.textContent = '함께 오른 높이 : ';
+    updateDistanceDisplay(window._totalDistance || 0);
   } else {
-    el.textContent = (myDistance / 1000).toFixed(2) + ' km';
+    label.textContent = '내가 오른 높이 : ';
+    const el = document.getElementById('distance-text');
+    if (el) el.textContent = myDistance < 1000 ? myDistance.toFixed(1) + ' m' : (myDistance/1000).toFixed(2) + ' km';
   }
 }
 
+function updateMyDistanceDisplay() {
+  if (distanceMode !== 'mine') return;
+  const el = document.getElementById('distance-text');
+  if (!el) return;
+  el.textContent = myDistance < 1000 ? myDistance.toFixed(1) + ' m' : (myDistance/1000).toFixed(2) + ' km';
+}
+
 function updateDistanceDisplay(meters) {
+  window._totalDistance = meters;
+  if (distanceMode !== 'total') return;
   const el = document.getElementById('distance-text');
   if (!el) return;
   if (meters < 1000) {
